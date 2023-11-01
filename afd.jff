@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><!--Created with JFLAP 7.1.--><structure>
+	<type>fa</type>
+	<automaton>
+		<!--The list of states.-->
+		<state id="0" name="q0">
+			<x>889.0</x>
+			<y>288.0</y>
+			<initial/>
+		</state>
+		<state id="1" name="q1">
+			<x>1038.0</x>
+			<y>287.0</y>
+		</state>
+		<state id="2" name="q2">
+			<x>1168.0</x>
+			<y>349.0</y>
+			<final/>
+		</state>
+		<state id="3" name="q3">
+			<x>1164.0</x>
+			<y>229.0</y>
+		</state>
+		<state id="4" name="q4">
+			<x>1291.0</x>
+			<y>279.0</y>
+		</state>
+		<state id="5" name="q5">
+			<x>1058.0</x>
+			<y>452.0</y>
+		</state>
+		<state id="6" name="q6">
+			<x>971.0</x>
+			<y>378.0</y>
+		</state>
+		<!--The list of transitions.-->
+		<transition>
+			<from>4</from>
+			<to>2</to>
+			<read>outro*</read>
+		</transition>
+		<transition>
+			<from>5</from>
+			<to>5</to>
+			<read>letra</read>
+		</transition>
+		<transition>
+			<from>1</from>
+			<to>2</to>
+			<read>outro*</read>
+		</transition>
+		<transition>
+			<from>1</from>
+			<to>3</to>
+			<read>.</read>
+		</transition>
+		<transition>
+			<from>6</from>
+			<to>6</to>
+			<read>—</read>
+		</transition>
+		<transition>
+			<from>5</from>
+			<to>5</to>
+			<read>—</read>
+		</transition>
+		<transition>
+			<from>6</from>
+			<to>5</to>
+			<read>letra</read>
+		</transition>
+		<transition>
+			<from>0</from>
+			<to>1</to>
+			<read>digito</read>
+		</transition>
+		<transition>
+			<from>3</from>
+			<to>4</to>
+			<read>digito</read>
+		</transition>
+		<transition>
+			<from>0</from>
+			<to>6</to>
+			<read>—</read>
+		</transition>
+		<transition>
+			<from>4</from>
+			<to>4</to>
+			<read>digito</read>
+		</transition>
+		<transition>
+			<from>1</from>
+			<to>1</to>
+			<read>digito</read>
+		</transition>
+		<transition>
+			<from>5</from>
+			<to>5</to>
+			<read>digito</read>
+		</transition>
+		<transition>
+			<from>5</from>
+			<to>2</to>
+			<read>outro*</read>
+		</transition>
+		<note>
+			<text>INTCON</text>
+			<x>1032.0</x>
+			<y>267.0</y>
+		</note>
+		<note>
+			<text>REALCON</text>
+			<x>1168.0</x>
+			<y>309.0</y>
+		</note>
+		<note>
+			<text>ID</text>
+			<x>1050.0</x>
+			<y>379.0</y>
+		</note>
+	</automaton>
+</structure>
