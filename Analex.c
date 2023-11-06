@@ -124,6 +124,16 @@ TOKEN Analex(FILE *fd) {
                     else if(c == '\'') {
                         state = 30;
                     }
+                    else if(c == '\n') {
+                        state = 0;
+                        t.cat = EOEXP;
+                        lineCount++;
+                        return t;
+                    }
+                    else if(c == EOF) {
+                        t.cat = EOFILE;
+                        return t;
+                    }
                     else {
                         printf("Invalid character on STATE 0!");
                         exit(1);
