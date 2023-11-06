@@ -7,8 +7,6 @@
 #define STRING_SIZE 100
 #define NUM_SIZE 20
 
-
-
 TOKEN Analex(FILE *fd) {
 
     int state;
@@ -21,6 +19,8 @@ TOKEN Analex(FILE *fd) {
 
     char string[STRING_SIZE] = "";
     int sizeS = 0;
+
+    char constChar = "";
 
     state = 0;
     t.processed = false;
@@ -327,7 +327,7 @@ TOKEN Analex(FILE *fd) {
             case 27: if(c == '\n') {
                         state = 28;
                         t.cat = COMMENT;
-                        strcpy(t.string, string);
+                        strcpy(t.comment, string);
                         return t;
                     }
                     else {
@@ -338,13 +338,10 @@ TOKEN Analex(FILE *fd) {
                     break;
             case 30: if(c == '\\') {
                         state = 31;
-                        string[sizeS] = c;
-                        string[++sizeS] = '\0';
                     }
                     else if(isprint(c) != 0 && c != '\'') {
                         state = 29;
-                        string[sizeS] = c;
-                        string[++sizeS] = '\0';
+                        constChar = c;
                     }
                     else {
                         printf("Invalid character on STATE 30!");
@@ -354,7 +351,7 @@ TOKEN Analex(FILE *fd) {
             case 29: if(c == '\'') {
                         state = 47;
                         t.cat = CONST_CHAR;
-                        strcpy(t.charVal, string);
+                        t.charVal = constChar;
                         return t;
                     }
                     else {
@@ -364,13 +361,11 @@ TOKEN Analex(FILE *fd) {
                     break;
             case 31: if(c == 'n') {
                         state = 32;
-                        string[sizeS] = c;
-                        string[++sizeS] = '\0';
+                        constChar = '\n';
                     }
                     else if(c == '0') {
                         state = 33;
-                        string[sizeS] = c;
-                        string[++sizeS] = '\0';
+                        constChar = '\0';
                     }
                     else {
                         printf("Invalid character on STATE 31!");
@@ -380,7 +375,7 @@ TOKEN Analex(FILE *fd) {
             case 32: if(c == '\'') {
                         state = 48;
                         t.cat = CONST_CHAR;
-                        strcpy(t.charVal, string);
+                        t.charVal = constChar;
                         return t;
                     }
                     else {
@@ -391,7 +386,7 @@ TOKEN Analex(FILE *fd) {
             case 33: if(c == '\'') {
                         state = 49;
                         t.cat = CONST_CHAR;
-                        strcpy(t.charVal, string);
+                        t.charVal = constChar;
                         return t;
                     }
                     else {
@@ -401,4 +396,84 @@ TOKEN Analex(FILE *fd) {
                     break;
         }
     }
+}
+
+int main() {
+    FILE *fd;
+    TOKEN tk;
+    if((fd=fopen("expression.dat", "r")) == NULL) {
+        printf("File not found!");
+    }
+
+    printf("LINHA %d: ", lineCount);
+    while (1) {
+        tk = Analex(fd);
+        switch (tk.cat) {
+            case ID: printf("<ID, %s> ", tk.lexeme);
+                     break;
+            case SYMBOL: switch (tk.sy_code) {
+                            case ASSIGN: printf("<SYMBOL, ASSIGN> ");
+                                         break;
+                            case ADD: printf("<SYMBOL, ADD> ");
+                                         break;
+                            case SUBT: printf("<SYMBOL, SUBT> ");
+                                         break;
+                            case MULT: printf("<SYMBOL, MULT> ");
+                                         break;
+                            case DIV: printf("<SYMBOL, DIV> ");
+                                         break;
+                            case ADDR_OF: printf("<SYMBOL, ADDR_OF> ");
+                                         break;
+                            case EQUAL: printf("<SYMBOL, EQUAL> ");
+                                         break;
+                            case GREATER: printf("<SYMBOL, GREATER> ");
+                                         break;
+                            case LESS: printf("<SYMBOL, LESS> ");
+                                         break;
+                            case GREATER_EQ: printf("<SYMBOL, GREATER_EQ> ");
+                                         break;
+                            case LESS_EQ: printf("<SYMBOL, LESS_EQ> ");
+                                         break;
+                            case NOT_EQ: printf("<SYMBOL, NOT_EQ> ");
+                                         break;
+                            case AND: printf("<SYMBOL, AND> ");
+                                         break;
+                            case OR: printf("<SYMBOL, OR> ");
+                                         break;
+                            case NOT: printf("<SYMBOL, NOT> ");
+                                         break;
+                            case OPEN_PAR: printf("<SYMBOL, OPEN_PAR> ");
+                                         break;
+                            case CLOSE_PAR: printf("<SYMBOL, CLOSE_PAR> ");
+                                         break;
+                            case OPEN_BRACK: printf("<SYMBOL, OPEN_BRACK> ");
+                                         break;
+                            case CLOSE_BRACK: printf("<SYMBOL, CLOSE_BRACK> ");
+                                         break;
+                            case OPEN_BRACE: printf("<SYMBOL, OPEN_BRACE> ");
+                                         break;
+                            case CLOSE_BRACE: printf("<SYMBOL, CLOSE_BRACE> ");
+                                         break;
+                        }
+                        break;
+            case CONST_INT: printf("<CONST_INT, %d> ", tk.intVal);
+                            break;
+            case CONST_REAL: printf("<CONST_REAL, %f> ", tk.realVal);
+                             break;
+            case CONST_CHAR: printf("<CONST_CHAR, %c> ", tk.charVal);
+                             break;
+            case CONST_STR: printf("<CONST_STR, %s> ", tk.string);
+                            break;
+            case COMMENT: printf("<COMMENT, %s> ", tk.comment);
+                          break;
+            case EOEXP: printf("<END_OF_EXP, %d>\n", 0);
+                        printf("LINHA %d: ", lineCount);
+                        break;
+            case EOFILE: printf(" <END OF FILE REACHED>\n");
+                         break;
+        }
+        if(tk.cat == EOFILE) break;
+    }
+    fclose(fd);
+    return 0;
 }
