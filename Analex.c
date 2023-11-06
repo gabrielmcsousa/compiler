@@ -125,7 +125,7 @@ TOKEN Analex(FILE *fd) {
                         state = 30;
                     }
                     else {
-                        printf("Invalid character!");
+                        printf("Invalid character on STATE 0!");
                         exit(1);
                     }
                     break;
@@ -135,7 +135,7 @@ TOKEN Analex(FILE *fd) {
                         string[++sizeS] = '\0';
                     }
                     else {
-                        printf("Invalid character!");
+                        printf("Invalid character on STATE 34!");
                         exit(1);
                     }
                     break;
@@ -154,7 +154,7 @@ TOKEN Analex(FILE *fd) {
                         return t;
                     }
                     else {
-                        printf("Invalid character!");
+                        printf("Invalid character on STATE 35!");
                         exit(1);
                     }
                     break;
@@ -177,7 +177,7 @@ TOKEN Analex(FILE *fd) {
                         digits[++sizeD] = '\0';
                     }
                     else {
-                        printf("Invalid character!");
+                        printf("Invalid character on STATE 3!");
                         exit(1);
                     }
                     break;
@@ -218,7 +218,7 @@ TOKEN Analex(FILE *fd) {
                         lexeme[++sizeL] = '\0';
                     }
                     else {
-                        printf("Invalid character!");
+                        printf("Invalid character on STATE 6!");
                         exit(1);
                     }
                     break;
@@ -229,7 +229,7 @@ TOKEN Analex(FILE *fd) {
                         return t;
                     }
                     else {
-                        printf("Invalid character!");
+                        printf("Invalid character on STATE 25!");
                         exit(1);
                     }
                     break;
@@ -337,7 +337,7 @@ TOKEN Analex(FILE *fd) {
                         string[++sizeS] = '\0';
                     }
                     else {
-                        printf("Invalid character on CONST_CHAR!");
+                        printf("Invalid character on STATE 30!");
                         exit(1);
                     }
                     break;
@@ -348,7 +348,7 @@ TOKEN Analex(FILE *fd) {
                         return t;
                     }
                     else {
-                        printf("Invalid character on CONST_CHAR!");
+                        printf("Invalid character on STATE 29!");
                         exit(1);
                     }
                     break;
@@ -363,7 +363,7 @@ TOKEN Analex(FILE *fd) {
                         string[++sizeS] = '\0';
                     }
                     else {
-                        printf("Invalid character on CONST_CHAR!");
+                        printf("Invalid character on STATE 31!");
                         exit(1);
                     }
                     break;
@@ -374,7 +374,7 @@ TOKEN Analex(FILE *fd) {
                         return t;
                     }
                     else {
-                        printf("Invalid character on CONST_CHAR!");
+                        printf("Invalid character on STATE 32!");
                         exit(1);
                     }
                     break;
@@ -385,7 +385,7 @@ TOKEN Analex(FILE *fd) {
                         return t;
                     }
                     else {
-                        printf("Invalid character on CONST_CHAR!");
+                        printf("Invalid character on STATE 33!");
                         exit(1);
                     }
                     break;
