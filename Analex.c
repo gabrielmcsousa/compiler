@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 #include "Analex.h"
 
 #define LEXEME_SIZE 50
@@ -20,7 +21,9 @@ TOKEN Analex(FILE *fd) {
     char string[STRING_SIZE] = "";
     int sizeS = 0;
 
-    char constChar = "";
+    char constChar;
+
+    TOKEN t;
 
     state = 0;
     t.processed = false;
@@ -28,7 +31,7 @@ TOKEN Analex(FILE *fd) {
         char c = fgetc(fd);
         switch (state) {
             case 0: if (c == ' ' || c == '\t') state = 0;
-                    else if(c == "\"") {
+                    else if(c == '\"') {
                         state = 34;
                     }
                     else if(c >= '0' && c <= '9') {
@@ -170,6 +173,11 @@ TOKEN Analex(FILE *fd) {
                     break;
             case 1: if(c == '.') {
                         state = 3;
+                        digits[sizeD] = c;
+                        digits[++sizeD] = '\0';
+                    }
+                    else if(c >= '0' && c <= '9') {
+                        state = 1;
                         digits[sizeD] = c;
                         digits[++sizeD] = '\0';
                     }
