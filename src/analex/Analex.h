@@ -29,7 +29,9 @@ typedef struct{
     };
 } TOKEN;
 
-int lineCount = 1;
+extern int lineCount;
+extern TOKEN t;
+extern FILE *fd;
 
 TOKEN Analex(FILE *);
 

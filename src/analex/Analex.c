@@ -23,8 +23,6 @@ TOKEN Analex(FILE *fd) {
 
     char constChar;
 
-    TOKEN t;
-
     state = 0;
     t.processed = false;
     while (true) {
@@ -240,7 +238,7 @@ TOKEN Analex(FILE *fd) {
                         exit(1);
                     }
                     break;
-            case 25: if(c == "|") {
+            case 25: if(c == '|') {
                         state = 26;
                         t.cat = SYMBOL;
                         t.sy_code = OR;
@@ -251,7 +249,7 @@ TOKEN Analex(FILE *fd) {
                         exit(1);
                     }
                     break;
-            case 18: if(c == "&") {
+            case 18: if(c == '&') {
                         state = 24;
                         t.cat = SYMBOL;
                         t.sy_code = AND;
@@ -404,84 +402,4 @@ TOKEN Analex(FILE *fd) {
                     break;
         }
     }
-}
-
-int main() {
-    FILE *fd;
-    TOKEN tk;
-    if((fd=fopen("expression.dat", "r")) == NULL) {
-        printf("File not found!");
-    }
-
-    printf("LINHA %d: ", lineCount);
-    while (1) {
-        tk = Analex(fd);
-        switch (tk.cat) {
-            case ID: printf("<ID, %s> ", tk.lexeme);
-                     break;
-            case SYMBOL: switch (tk.sy_code) {
-                            case ASSIGN: printf("<SYMBOL, ASSIGN> ");
-                                         break;
-                            case ADD: printf("<SYMBOL, ADD> ");
-                                         break;
-                            case SUBT: printf("<SYMBOL, SUBT> ");
-                                         break;
-                            case MULT: printf("<SYMBOL, MULT> ");
-                                         break;
-                            case DIV: printf("<SYMBOL, DIV> ");
-                                         break;
-                            case ADDR_OF: printf("<SYMBOL, ADDR_OF> ");
-                                         break;
-                            case EQUAL: printf("<SYMBOL, EQUAL> ");
-                                         break;
-                            case GREATER: printf("<SYMBOL, GREATER> ");
-                                         break;
-                            case LESS: printf("<SYMBOL, LESS> ");
-                                         break;
-                            case GREATER_EQ: printf("<SYMBOL, GREATER_EQ> ");
-                                         break;
-                            case LESS_EQ: printf("<SYMBOL, LESS_EQ> ");
-                                         break;
-                            case NOT_EQ: printf("<SYMBOL, NOT_EQ> ");
-                                         break;
-                            case AND: printf("<SYMBOL, AND> ");
-                                         break;
-                            case OR: printf("<SYMBOL, OR> ");
-                                         break;
-                            case NOT: printf("<SYMBOL, NOT> ");
-                                         break;
-                            case OPEN_PAR: printf("<SYMBOL, OPEN_PAR> ");
-                                         break;
-                            case CLOSE_PAR: printf("<SYMBOL, CLOSE_PAR> ");
-                                         break;
-                            case OPEN_BRACK: printf("<SYMBOL, OPEN_BRACK> ");
-                                         break;
-                            case CLOSE_BRACK: printf("<SYMBOL, CLOSE_BRACK> ");
-                                         break;
-                            case OPEN_BRACE: printf("<SYMBOL, OPEN_BRACE> ");
-                                         break;
-                            case CLOSE_BRACE: printf("<SYMBOL, CLOSE_BRACE> ");
-                                         break;
-                        }
-                        break;
-            case CONST_INT: printf("<CONST_INT, %d> ", tk.intVal);
-                            break;
-            case CONST_REAL: printf("<CONST_REAL, %f> ", tk.realVal);
-                             break;
-            case CONST_CHAR: printf("<CONST_CHAR, %c> ", tk.charVal);
-                             break;
-            case CONST_STR: printf("<CONST_STR, %s> ", tk.string);
-                            break;
-            case COMMENT: printf("<COMMENT, %s> ", tk.comment);
-                          break;
-            case EOEXP: printf("<END_OF_EXP, %d>\n", 0);
-                        printf("LINHA %d: ", lineCount);
-                        break;
-            case EOFILE: printf(" <END OF FILE REACHED>\n");
-                         break;
-        }
-        if(tk.cat == EOFILE) break;
-    }
-    fclose(fd);
-    return 0;
 }
