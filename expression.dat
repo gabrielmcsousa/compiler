@@ -1,5 +1,2 @@
-bota = 27
-_lorota = "alow"
-__numeromagico = 5.28
-jota = &batata
-mariposa = 5*3/10 + (1-2)
+const int MEU_ID = 10, 15
+char c = 'j'

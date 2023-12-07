@@ -4,6 +4,7 @@
 #include <string.h>
 #include <ctype.h>
 #include "src/analex/Analex.h"
+// #include "src/anasynt/Anasynt.h"
 
 FILE *fd;
 TOKEN t;
@@ -15,11 +16,21 @@ void runLex() {
         printf("File not found!");
     }
 
-    printf("LINHA %d: ", lineCount);
-    while (1) {
+    printf("LINE %d: ", lineCount);
+    while(true) {
         t = Analex(fd);
         switch (t.cat) {
-            case ID: printf("<ID, %s> ", t.lexeme);
+            case ID: 
+                    if( (strcmp(t.lexeme, "const") == 0) || (strcmp(t.lexeme, "char") == 0) || (strcmp(t.lexeme, "int") == 0) || 
+                        (strcmp(t.lexeme, "float") == 0) || (strcmp(t.lexeme, "real") == 0) || (strcmp(t.lexeme, "bool") == 0) || 
+                        (strcmp(t.lexeme, "true") == 0) || (strcmp(t.lexeme, "false") == 0) || (strcmp(t.lexeme, "block") == 0) ||
+                        (strcmp(t.lexeme, "with") == 0) || (strcmp(t.lexeme, "main") == 0) || (strcmp(t.lexeme, "const") == 0)){
+                            t.cat = RES_WORD;
+                            printf("<RES_WORD, %s> ", t.lexeme);
+                    }
+                    else {
+                        printf("<ID, %s> ", t.lexeme);
+                    }
                      break;
             case SYMBOL: switch (t.sy_code) {
                             case ASSIGN: printf("<SYMBOL, ASSIGN> ");
@@ -77,7 +88,7 @@ void runLex() {
             case COMMENT: printf("<COMMENT, %s> ", t.comment);
                           break;
             case EOEXP: printf("<END_OF_EXP, %d>\n", 0);
-                        printf("LINHA %d: ", lineCount);
+                        printf("LINE %d: ", lineCount);
                         break;
             case EOFILE: printf(" <END OF FILE REACHED>\n");
                          break;
@@ -86,6 +97,28 @@ void runLex() {
     }
     fclose(fd);
 }
+
+// void runSynt() {
+//     if((fd=fopen("expression.dat", "r")) == NULL) {
+//         printf("File not found!");
+//     }
+
+//     while(true) {
+//         t = Analex(fd);
+//         if (t.cat == EOFILE) {
+//             printf("\nEnd of File!\n");
+//             break;
+//         }
+//         Prog();
+//         if (t.cat == EOEXP) {
+//             printf("\nLINE %d: Syntactic Error!\n\n", lineCount - 1);
+//         }
+//         else {
+//             error("Syntax error!");
+//         }
+//     }
+//     fclose(fd);
+// }
 
 int main() {
 

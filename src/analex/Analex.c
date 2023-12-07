@@ -37,7 +37,7 @@ TOKEN Analex(FILE *fd) {
                         digits[sizeD] = c;
                         digits[++sizeD] = '\0';
                     }
-                    else if(c >= 'a' && c<= 'z') {
+                    else if((c >= 'a' && c<= 'z') || (c >= 'A' && c<= 'Z')) {
                         state = 5;
                         lexeme[sizeL] = c;
                         lexeme[++sizeL] = '\0';
@@ -125,6 +125,30 @@ TOKEN Analex(FILE *fd) {
                     else if(c == '\'') {
                         state = 30;
                     }
+                    else if(c == ',') {
+                        state = 50;
+                        t.cat = SYMBOL;
+                        t.sy_code = COMMA;
+                        return t;
+                    }
+                    else if(c == '.') {
+                        state = 51;
+                        t.cat = SYMBOL;
+                        t.sy_code = PERIOD;
+                        return t;
+                    }
+                    else if(c == ':') {
+                        state = 52;
+                        t.cat = SYMBOL;
+                        t.sy_code = COLON;
+                        return t;
+                    }
+                    else if(c == ';') {
+                        state = 53;
+                        t.cat = SYMBOL;
+                        t.sy_code = SEMI_COLON;
+                        return t;
+                    }
                     else if(c == '\n') {
                         state = 0;
                         t.cat = EOEXP;
@@ -210,7 +234,7 @@ TOKEN Analex(FILE *fd) {
                         return t;
                     }
                     break;
-            case 5: if((c >= '0' && c <= '9') || (c >= 'a' && c<= 'z') || c == '_') {
+            case 5: if((c >= '0' && c <= '9') || (c >= 'a' && c<= 'z') || (c >= 'A' && c<= 'Z') || c == '_') {
                         state = 5;
                         lexeme[sizeL] = c;
                         lexeme[++sizeL] = '\0';
