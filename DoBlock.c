@@ -24,7 +24,8 @@ void runLex() {
                     if( (strcmp(t.lexeme, "const") == 0) || (strcmp(t.lexeme, "char") == 0) || (strcmp(t.lexeme, "int") == 0) || 
                         (strcmp(t.lexeme, "float") == 0) || (strcmp(t.lexeme, "real") == 0) || (strcmp(t.lexeme, "bool") == 0) || 
                         (strcmp(t.lexeme, "true") == 0) || (strcmp(t.lexeme, "false") == 0) || (strcmp(t.lexeme, "block") == 0) ||
-                        (strcmp(t.lexeme, "with") == 0) || (strcmp(t.lexeme, "main") == 0) || (strcmp(t.lexeme, "const") == 0)){
+                        (strcmp(t.lexeme, "with") == 0) || (strcmp(t.lexeme, "main") == 0) || (strcmp(t.lexeme, "const") == 0) ||
+                        (strcmp(t.lexeme, "do") == 0) || (strcmp(t.lexeme, "while") == 0) || (strcmp(t.lexeme, "endblock") == 0)){
                             t.cat = RES_WORD;
                             printf("<RES_WORD, %s> ", t.lexeme);
                     }
