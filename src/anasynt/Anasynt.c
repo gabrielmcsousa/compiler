@@ -11,12 +11,18 @@ void Prog() {
     while(t.cat == RES_WORD && ((strcmp(t.lexeme, "const") == 0) || (strcmp(t.lexeme, "char") == 0) || 
                                 (strcmp(t.lexeme, "int") == 0) || (strcmp(t.lexeme, "real") == 0) ||
                                 (strcmp(t.lexeme, "bool") == 0))) {
+                                    t.processed = true;
+                                    t = Analex(fd);
                                     Decl_list_var();
+                                    if(t.processed) t = Analex(fd);
                                 }
     
     if(t.processed) t = Analex(fd);
     while(t.cat == RES_WORD && (strcmp(t.lexeme, "block") == 0)) {
+        t.processed = true;
+        t = Analex(fd);
         Decl_block_prot();
+        if(t.processed) t = Analex(fd);
     }
     
     if(t.processed) t = Analex(fd);
@@ -24,7 +30,10 @@ void Prog() {
     
     if(t.processed) t = Analex(fd);
     while(t.cat == RES_WORD && (strcmp(t.lexeme, "block") == 0)) {
+        t.processed = true;
+        t = Analex(fd);
         Block_def();
+        if(t.processed) t = Analex(fd);
     }
 }
 
@@ -44,7 +53,9 @@ void Decl_list_var() {
     if(t.processed) t = Analex(fd);
     while(t.cat == SYMBOL && t.sy_code == COMMA){
         t.processed = true;
+        t = Analex(fd);
         Decl_var();
+        if(t.processed) t = Analex(fd);
     }
 }
 
@@ -171,20 +182,21 @@ void Decl_block_prot() {
         if(t.processed) t = Analex(fd);
         while(t.cat == SYMBOL && t.sy_code == OPEN_BRACK){
             t.processed = true;
-            if(t.processed) t = Analex(fd);
+            t = Analex(fd);
             if(t.cat == SYMBOL && t.sy_code == CLOSE_BRACK){
                 t.processed = true;
             }
             else {
                 error("Missing Close Bracket!");
             }
+            if(t.processed) t = Analex(fd);
         }
 
         if(t.processed) t = Analex(fd);
         while(t.cat == SYMBOL && t.sy_code == COMMA){
             t.processed = true;
+            t = Analex(fd);
             
-            if(t.processed) t = Analex(fd);
             if(t.cat == SYMBOL && t.sy_code == ADDR_OF){
                 t.processed = true;
                 Tipo();
@@ -196,15 +208,17 @@ void Decl_block_prot() {
             if(t.processed) t = Analex(fd);
             while(t.cat == SYMBOL && t.sy_code == OPEN_BRACK){
                 t.processed = true;
+                t = Analex(fd);
                 
-                if(t.processed) t = Analex(fd);
                 if(t.cat == SYMBOL && t.sy_code == CLOSE_BRACK){
                     t.processed = true;
                 }
                 else {
                     error("Missing Close Bracket!");
                 }
+                if(t.processed) t = Analex(fd);
             }
+            if(t.processed) t = Analex(fd);
         }
     }
 }
@@ -225,7 +239,10 @@ void Block_main(){
     while((t.cat == RES_WORD && ((strcmp(t.lexeme, "const") == 0) || (strcmp(t.lexeme, "char") == 0) || 
                                 (strcmp(t.lexeme, "int") == 0) || (strcmp(t.lexeme, "real") == 0) ||
                                 (strcmp(t.lexeme, "bool") == 0)))){
+                                    t.processed = true;
+                                    t = Analex(fd);
                                     Decl_list_var();
+                                    if(t.processed) t = Analex(fd);
                                 }
     if(t.processed) t = Analex(fd);
 
@@ -236,6 +253,7 @@ void Block_main(){
         t.processed = true;
         t = Analex(fd);
         Cmd();
+        if(t.processed) t = Analex(fd);
     }
     if(t.processed) t = Analex(fd);
 
@@ -324,14 +342,19 @@ void Block_def(){
                     t.processed = true;
                     t = Analex(fd);
                 }
+                if(t.processed) t = Analex(fd);
             }
+            if(t.processed) t = Analex(fd);
         }
 
         if(t.processed) t = Analex(fd);
         while(t.cat == RES_WORD && ((strcmp(t.lexeme, "const") == 0) || (strcmp(t.lexeme, "char") == 0) || 
                                 (strcmp(t.lexeme, "int") == 0) || (strcmp(t.lexeme, "real") == 0) ||
                                 (strcmp(t.lexeme, "bool") == 0))) {
+                                    t.processed = true;
+                                    t = Analex(fd);
                                     Decl_list_var();
+                                    if(t.processed) t = Analex(fd);
                                 }
 
         if(t.processed) t = Analex(fd);
@@ -342,6 +365,7 @@ void Block_def(){
             t.processed = true;
             t = Analex(fd);
             Cmd();
+            if(t.processed) t = Analex(fd);
         }
 
         if(t.processed) t = Analex(fd);
@@ -484,6 +508,7 @@ void Cmd(){
             t.processed = true;
             t = Analex(fd);
             Cmd();
+            if(t.processed) t = Analex(fd);
         }
         
         if(t.processed) t = Analex(fd);
@@ -513,7 +538,9 @@ void Cmd(){
                 t.processed = true;
                 t = Analex(fd);
                 Cmd();
+                if(t.processed) t = Analex(fd);
             }
+            if(t.processed) t = Analex(fd);
         }
 
         if(t.processed) t = Analex(fd);
@@ -527,6 +554,7 @@ void Cmd(){
                 t.processed = true;
                 t = Analex(fd);
                 Cmd();
+                if(t.processed) t = Analex(fd);
             }
         }
 
@@ -562,9 +590,9 @@ void Cmd(){
             t.processed = true;
             t = Analex(fd);
             Cmd();
+            if(t.processed) t = Analex(fd);
         }
 
-        if(t.processed) t = Analex(fd);
         if(t.cat != RES_WORD || (strcmp(t.lexeme, "endwhile") != 0)){
             error("Missing 'endwhile' !");
         }
@@ -588,4 +616,35 @@ void Cmd(){
         }
         t.processed = true;
     }
+}
+
+void Atrib(){
+    if(t.processed) t = Analex(fd);
+    if(t.cat != ID){
+        error("Missing ID");
+    }
+    t.processed = true;
+    t = Analex(fd);
+
+    while(t.cat == SYMBOL && t.sy_code == OPEN_BRACK){
+        t.processed = true;
+        t = Analex(fd);
+
+        Expr();
+
+        if(t.processed) t = Analex(fd);
+        if(t.cat != SYMBOL || t.sy_code != CLOSE_BRACK){
+            error("Missing ']' !");
+        }
+        t.processed = true;
+        t = Analex(fd);
+    }
+
+    if(t.cat != SYMBOL || t.sy_code != ASSIGN){
+        error("Missing '=' !");
+    }
+    t.processed = true;
+    t = Analex(fd);
+
+    Expr();
 }
