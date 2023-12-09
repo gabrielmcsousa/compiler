@@ -229,7 +229,10 @@ void Block_main(){
                                 }
     if(t.processed) t = Analex(fd);
 
-    while(t.cat == RES_WORD && (strcmp(t.lexeme, "do") == 0)){
+    while(t.cat == ID || (t.cat == RES_WORD && ((strcmp(t.lexeme, "do") == 0) || (strcmp(t.lexeme, "if") == 0) || (strcmp(t.lexeme, "while") == 0) || 
+                                (strcmp(t.lexeme, "goback") == 0) || (strcmp(t.lexeme, "getint") == 0) || (strcmp(t.lexeme, "getreal") == 0) || 
+                                (strcmp(t.lexeme, "getchar") == 0) || (strcmp(t.lexeme, "putint") == 0) || (strcmp(t.lexeme, "putreal") == 0) || 
+                                (strcmp(t.lexeme, "putchar") == 0)))){
         t.processed = true;
         t = Analex(fd);
         Cmd();
@@ -332,7 +335,10 @@ void Block_def(){
                                 }
 
         if(t.processed) t = Analex(fd);
-        while(t.cat == RES_WORD && (strcmp(t.lexeme, "do") == 0)){
+        while(t.cat == ID || (t.cat == RES_WORD && ((strcmp(t.lexeme, "do") == 0) || (strcmp(t.lexeme, "if") == 0) || (strcmp(t.lexeme, "while") == 0) || 
+                                    (strcmp(t.lexeme, "goback") == 0) || (strcmp(t.lexeme, "getint") == 0) || (strcmp(t.lexeme, "getreal") == 0) || 
+                                    (strcmp(t.lexeme, "getchar") == 0) || (strcmp(t.lexeme, "putint") == 0) || (strcmp(t.lexeme, "putreal") == 0) || 
+                                    (strcmp(t.lexeme, "putchar") == 0)))){
             t.processed = true;
             t = Analex(fd);
             Cmd();
@@ -346,4 +352,240 @@ void Block_def(){
     }
     t.processed = true;
     t = Analex(fd);
+}
+
+// !!OK!!
+void Cmd(){
+    if(t.processed) t = Analex(fd);
+    if(t.cat == RES_WORD && (strcmp(t.lexeme, "do") == 0)){
+        t.processed = true;
+        t = Analex(fd);
+
+        if(t.cat == ID){
+            t.processed = true;
+            t = Analex(fd);
+            if(t.cat == RES_WORD && (strcmp(t.lexeme, "with") == 0)){
+                t.processed =  true;
+                t = Analex(fd);
+
+                if(t.cat != ID){
+                    error("Missing ID !");
+                }
+                t.processed = true;
+                t = Analex(fd);
+
+                while(t.cat == SYMBOL && t.sy_code == COMMA){
+                    t.processed = true;
+                    t = Analex(fd);
+                    
+                    if(t.cat != ID){
+                        error("Missing ID !");
+                    }
+                    
+                    t.processed = true;
+                    t = Analex(fd);
+                }
+            }
+        }
+        else if(t.cat == ID || (t.cat == RES_WORD && ((strcmp(t.lexeme, "do") == 0) || (strcmp(t.lexeme, "if") == 0) || (strcmp(t.lexeme, "while") == 0) || 
+                                    (strcmp(t.lexeme, "goback") == 0) || (strcmp(t.lexeme, "getint") == 0) || (strcmp(t.lexeme, "getreal") == 0) || 
+                                    (strcmp(t.lexeme, "getchar") == 0) || (strcmp(t.lexeme, "putint") == 0) || (strcmp(t.lexeme, "putreal") == 0) || 
+                                    (strcmp(t.lexeme, "putchar") == 0)))){
+            t.processed = true;
+            t = Analex(fd);
+            Cmd();
+        }
+        else{
+            error("Missing id or cmd !");
+        }
+
+        if(t.processed) t = Analex(fd);
+        if(t.cat == RES_WORD && (strcmp(t.lexeme, "varying") == 0)){
+            t.processed = true;
+            t = Analex(fd);
+
+            if(t.cat != ID){
+                error("Missing ID !");
+            }
+            t.processed = true;
+            t = Analex(fd);
+
+            if(t.cat != RES_WORD || (strcmp(t.lexeme, "from") != 0)){
+                error("Missing 'from' !");
+            }
+            t.processed = true;
+            t = Analex(fd);
+
+            Expr();
+
+            if(t.processed) t = Analex(fd);
+            if(t.cat != RES_WORD || ((strcmp(t.lexeme, "to") != 0) && (strcmp(t.lexeme, "downto") != 0))){
+                error("Missing 'to' or 'downto' !");
+            }
+            t.processed = true;
+            t = Analex(fd);
+
+            Expr();
+        }
+        else if(t.cat == RES_WORD && (strcmp(t.lexeme, "while") == 0)){
+            t.processed = true;
+            t = Analex(fd);
+
+            if(t.cat != SYMBOL || t.sy_code != OPEN_PAR){
+                error("Missing '(' !");
+            }
+            t.processed = true;
+            t = Analex(fd);
+
+            Expr();
+
+            if(t.processed) t = Analex(fd);
+            if(t.cat != SYMBOL || t.sy_code != CLOSE_PAR){
+                error("Missing ')' !");
+            }
+            t.processed = true;
+        }
+        else if(t.cat == RES_WORD && (strcmp(t.lexeme, "for") == 0)){
+            t.processed = true;
+            t = Analex(fd);
+
+            Expr();
+            
+            if(t.processed) t = Analex(fd);
+            if(t.cat != RES_WORD || (strcmp(t.lexeme, "times") == 0)){
+                error("Missing 'times' !");
+            }
+        }
+    }
+    // END IF 'do'
+    else if(t.cat == RES_WORD && (strcmp(t.lexeme, "if") == 0)){
+        t.processed = true;
+        t = Analex(fd);
+        
+        if(t.cat != SYMBOL || t.sy_code != OPEN_PAR){
+            error("Missing '(' !");
+        }
+        t.processed = true;
+        t = Analex(fd);
+
+        Expr();
+
+        if(t.processed) t = Analex(fd);
+        if(t.cat != SYMBOL || t.sy_code != CLOSE_PAR){
+            error("Missing ')' !");
+        }
+        t.processed = true;
+        t = Analex(fd);
+
+        while(t.cat == ID || (t.cat == RES_WORD && ((strcmp(t.lexeme, "do") == 0) || (strcmp(t.lexeme, "if") == 0) || (strcmp(t.lexeme, "while") == 0) || 
+                                    (strcmp(t.lexeme, "goback") == 0) || (strcmp(t.lexeme, "getint") == 0) || (strcmp(t.lexeme, "getreal") == 0) || 
+                                    (strcmp(t.lexeme, "getchar") == 0) || (strcmp(t.lexeme, "putint") == 0) || (strcmp(t.lexeme, "putreal") == 0) || 
+                                    (strcmp(t.lexeme, "putchar") == 0)))){
+            t.processed = true;
+            t = Analex(fd);
+            Cmd();
+        }
+        
+        if(t.processed) t = Analex(fd);
+        while(t.cat == RES_WORD || (strcmp(t.lexeme, "elseif") == 0)){
+            t.processed = true;
+            t = Analex(fd);
+
+            if(t.cat != SYMBOL || t.sy_code != OPEN_PAR){
+                error("Missing '(' !");
+            }
+            t.processed = true;
+            t = Analex(fd);
+
+            Expr();
+
+            if(t.processed) t = Analex(fd);
+            if(t.cat != SYMBOL || t.sy_code != CLOSE_PAR){
+                error("Missing ')' !");
+            }
+            t.processed = true;
+            t = Analex(fd);
+
+            while(t.cat == ID || (t.cat == RES_WORD && ((strcmp(t.lexeme, "do") == 0) || (strcmp(t.lexeme, "if") == 0) || (strcmp(t.lexeme, "while") == 0) || 
+                                    (strcmp(t.lexeme, "goback") == 0) || (strcmp(t.lexeme, "getint") == 0) || (strcmp(t.lexeme, "getreal") == 0) || 
+                                    (strcmp(t.lexeme, "getchar") == 0) || (strcmp(t.lexeme, "putint") == 0) || (strcmp(t.lexeme, "putreal") == 0) || 
+                                    (strcmp(t.lexeme, "putchar") == 0)))){
+                t.processed = true;
+                t = Analex(fd);
+                Cmd();
+            }
+        }
+
+        if(t.processed) t = Analex(fd);
+        if(t.cat == RES_WORD && (strcmp(t.lexeme, "else") == 0)){
+            t.processed = true;
+            t = Analex(fd);
+            while(t.cat == ID || (t.cat == RES_WORD && ((strcmp(t.lexeme, "do") == 0) || (strcmp(t.lexeme, "if") == 0) || (strcmp(t.lexeme, "while") == 0) || 
+                                    (strcmp(t.lexeme, "goback") == 0) || (strcmp(t.lexeme, "getint") == 0) || (strcmp(t.lexeme, "getreal") == 0) || 
+                                    (strcmp(t.lexeme, "getchar") == 0) || (strcmp(t.lexeme, "putint") == 0) || (strcmp(t.lexeme, "putreal") == 0) || 
+                                    (strcmp(t.lexeme, "putchar") == 0)))){
+                t.processed = true;
+                t = Analex(fd);
+                Cmd();
+            }
+        }
+
+        if(t.processed) t = Analex(fd);
+        if(t.cat != RES_WORD || (strcmp(t.lexeme, "endif") != 0)){
+            error("Missing 'endif' !");
+        }
+    }
+    // END IF 'if'
+    else if(t.cat == RES_WORD && (strcmp(t.lexeme, "while") == 0)){
+        t.processed = true;
+        t = Analex(fd);
+        
+        if(t.cat != SYMBOL || t.sy_code != OPEN_PAR){
+            error("Missing '(' !");
+        }
+        t.processed = true;
+        t = Analex(fd);
+
+        Expr();
+
+        if(t.processed) t = Analex(fd);
+        if(t.cat != SYMBOL || t.sy_code != CLOSE_PAR){
+            error("Missing ')' !");
+        }
+        t.processed = true;
+        t = Analex(fd);
+
+        while(t.cat == ID || (t.cat == RES_WORD && ((strcmp(t.lexeme, "do") == 0) || (strcmp(t.lexeme, "if") == 0) || (strcmp(t.lexeme, "while") == 0) || 
+                                    (strcmp(t.lexeme, "goback") == 0) || (strcmp(t.lexeme, "getint") == 0) || (strcmp(t.lexeme, "getreal") == 0) || 
+                                    (strcmp(t.lexeme, "getchar") == 0) || (strcmp(t.lexeme, "putint") == 0) || (strcmp(t.lexeme, "putreal") == 0) || 
+                                    (strcmp(t.lexeme, "putchar") == 0)))){
+            t.processed = true;
+            t = Analex(fd);
+            Cmd();
+        }
+
+        if(t.processed) t = Analex(fd);
+        if(t.cat != RES_WORD || (strcmp(t.lexeme, "endwhile") != 0)){
+            error("Missing 'endwhile' !");
+        }
+        t.processed = true;
+    }
+    // END IF 'while'
+    else if(t.cat == ID){
+        Atrib();
+    }
+    // END IF 'atrib'
+    else if(t.cat == RES_WORD && (strcmp(t.lexeme, "goback") == 0)){
+        t.processed = true;
+    }
+    else if(t.cat == RES_WORD && ((strcmp(t.lexeme, "getint") == 0) || (strcmp(t.lexeme, "getreal") == 0) || (strcmp(t.lexeme, "getchar") == 0) ||
+                                  (strcmp(t.lexeme, "putint") == 0) || (strcmp(t.lexeme, "putreal") == 0) || (strcmp(t.lexeme, "putchar") == 0))){
+        t.processed = true;
+        t = Analex(fd);
+
+        if(t.cat != ID){
+            error("Missing ID !");
+        }
+        t.processed = true;
+    }
 }

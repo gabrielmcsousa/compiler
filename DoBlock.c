@@ -25,7 +25,13 @@ void runLex() {
                         (strcmp(t.lexeme, "float") == 0) || (strcmp(t.lexeme, "real") == 0) || (strcmp(t.lexeme, "bool") == 0) || 
                         (strcmp(t.lexeme, "true") == 0) || (strcmp(t.lexeme, "false") == 0) || (strcmp(t.lexeme, "block") == 0) ||
                         (strcmp(t.lexeme, "with") == 0) || (strcmp(t.lexeme, "main") == 0) || (strcmp(t.lexeme, "const") == 0) ||
-                        (strcmp(t.lexeme, "do") == 0) || (strcmp(t.lexeme, "while") == 0) || (strcmp(t.lexeme, "endblock") == 0)){
+                        (strcmp(t.lexeme, "do") == 0) || (strcmp(t.lexeme, "while") == 0) || (strcmp(t.lexeme, "endblock") == 0) || 
+                        (strcmp(t.lexeme, "varying") == 0) || (strcmp(t.lexeme, "from") == 0) || (strcmp(t.lexeme, "to") == 0) ||
+                        (strcmp(t.lexeme, "downto") == 0) || (strcmp(t.lexeme, "for") == 0) || (strcmp(t.lexeme, "times") == 0) ||
+                        (strcmp(t.lexeme, "if") == 0) || (strcmp(t.lexeme, "elseif") == 0) || (strcmp(t.lexeme, "else") == 0) || 
+                        (strcmp(t.lexeme, "endif") == 0) || (strcmp(t.lexeme, "endwhile") == 0) || (strcmp(t.lexeme, "goback") == 0) ||
+                        (strcmp(t.lexeme, "getint") == 0) || (strcmp(t.lexeme, "getreal") == 0) || (strcmp(t.lexeme, "getchar") == 0) ||
+                        (strcmp(t.lexeme, "putint") == 0) || (strcmp(t.lexeme, "putreal") == 0) || (strcmp(t.lexeme, "putchar") == 0)){
                             t.cat = RES_WORD;
                             printf("<RES_WORD, %s> ", t.lexeme);
                     }
