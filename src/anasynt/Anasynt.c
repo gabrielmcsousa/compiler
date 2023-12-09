@@ -648,3 +648,103 @@ void Atrib(){
 
     Expr();
 }
+
+void Expr(){
+    Expr_simp();
+
+    if(t.processed) t = Analex(fd);
+    if(t.cat == SYMBOL){
+        Op_rel();
+        if(t.processed) t = Analex(fd);
+        Expr_simp();
+    }
+}
+
+void Expr_simp(){
+    if(t.processed) t = Analex(fd);
+    if(t.cat == SYMBOL && (t.sy_code == ADD || t.sy_code == SUBT)){
+        t.processed = true;
+    }
+
+    if(t.processed) t = Analex(fd);
+    Termo();
+
+    if(t.processed) t = Analex(fd);
+    while(t.cat == SYMBOL){
+        if(t.sy_code != ADD && t.sy_code != SUBT && t.sy_code != OR){
+            error("Invalid Symbol!");
+        }
+        t.processed = true;
+        t = Analex(fd);
+
+        Termo();
+        if(t.processed) t = Analex(fd);
+    }
+}
+
+void Termo(){
+    Fator();
+
+    if(t.processed) t = Analex(fd);
+    while(t.cat == SYMBOL){
+        if(t.sy_code != MULT || t.sy_code != DIV || t.sy_code != AND){
+            error("Invalid Symbol!");
+        }
+        t.processed = true;
+        t = Analex(fd);
+
+        Fator();
+        if(t.processed) t = Analex(fd);
+    }
+}
+
+void Fator(){
+    if(t.cat == ID){
+        t.processed = true;
+        t = Analex(fd);
+
+        while(t.cat == SYMBOL && t.sy_code == OPEN_BRACK){
+            t.processed = true;
+            t = Analex(fd);
+
+            Expr();
+
+            if(t.processed) t = Analex(fd);
+            if(t.cat != SYMBOL || t.sy_code != CLOSE_BRACK){
+                error("Missing ']' !");
+            }
+            t.processed = true;
+            t = Analex(fd);
+        }    
+    }
+    else if(t.cat == CONST_INT || t.cat == CONST_REAL || t.cat == CONST_CHAR){
+        t.processed = true;
+    }
+    else if(t.cat == SYMBOL && t.sy_code == OPEN_PAR){
+        t.processed = true;
+        t = Analex(fd);
+
+        Expr();
+
+        if(t.processed) t = Analex(fd);
+        if(t.cat != SYMBOL || t.sy_code != CLOSE_PAR){
+            error("Missing ')' !");
+        }    
+    }
+    else if(t.cat == SYMBOL && t.sy_code == NOT){
+        t.processed = true;
+        t = Analex(fd);
+        Fator();
+    }
+}
+
+void Op_rel(){
+    if(t.processed) t = Analex(fd);
+    if(t.cat != SYMBOL || t.sy_code != EQUAL || t.sy_code != NOT_EQ || t.sy_code != LESS 
+                       || t.sy_code != LESS_EQ || t.sy_code != GREATER || t.sy_code != GREATER_EQ){
+            error("Invalid Operator!");
+    }
+    else{
+        t.processed = true;
+    }
+}
