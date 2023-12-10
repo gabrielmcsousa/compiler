@@ -8,7 +8,32 @@
 #define STRING_SIZE 100
 #define NUM_SIZE 20
 
-TOKEN Analex(FILE *fd) {
+TOKEN Analex(FILE *fd, bool skip_EOEXP){
+    static bool firstTime = true;
+    bool skip = true;
+    if(!skip_EOEXP) skip = false;
+
+    TOKEN tk;
+
+    if(firstTime) {
+        firstTime = false;
+        tk = AnalexTLA(fd, skip);
+        if(tk.cat == EOFILE) tkLA = tk;
+        else tkLA = AnalexTLA(fd, skip);
+        return tk;
+    }
+    else if(tkLA.cat == EOFILE){
+        return(tkLA);
+    }
+    else{
+        tk = tkLA;
+        tkLA = AnalexTLA(fd, skip);
+        return tk;
+    }
+}
+
+
+TOKEN AnalexTLA(FILE *fd, bool skip_EOEXP) {
 
     int state;
 
@@ -29,6 +54,7 @@ TOKEN Analex(FILE *fd) {
         char c = fgetc(fd);
         switch (state) {
             case 0: if (c == ' ' || c == '\t') state = 0;
+                    else if(c == '\n' && skip_EOEXP) state = 0;
                     else if(c == '\"') {
                         state = 34;
                     }
@@ -244,6 +270,20 @@ TOKEN Analex(FILE *fd) {
                         ungetc(c, fd);
                         t.cat = ID;
                         strcpy(t.lexeme, lexeme);
+
+                        if( (strcmp(t.lexeme, "const") == 0) || (strcmp(t.lexeme, "char") == 0) || (strcmp(t.lexeme, "int") == 0) || 
+                        (strcmp(t.lexeme, "float") == 0) || (strcmp(t.lexeme, "real") == 0) || (strcmp(t.lexeme, "bool") == 0) || 
+                        (strcmp(t.lexeme, "true") == 0) || (strcmp(t.lexeme, "false") == 0) || (strcmp(t.lexeme, "block") == 0) ||
+                        (strcmp(t.lexeme, "with") == 0) || (strcmp(t.lexeme, "main") == 0) || (strcmp(t.lexeme, "const") == 0) ||
+                        (strcmp(t.lexeme, "do") == 0) || (strcmp(t.lexeme, "while") == 0) || (strcmp(t.lexeme, "endblock") == 0) || 
+                        (strcmp(t.lexeme, "varying") == 0) || (strcmp(t.lexeme, "from") == 0) || (strcmp(t.lexeme, "to") == 0) ||
+                        (strcmp(t.lexeme, "downto") == 0) || (strcmp(t.lexeme, "for") == 0) || (strcmp(t.lexeme, "times") == 0) ||
+                        (strcmp(t.lexeme, "if") == 0) || (strcmp(t.lexeme, "elseif") == 0) || (strcmp(t.lexeme, "else") == 0) || 
+                        (strcmp(t.lexeme, "endif") == 0) || (strcmp(t.lexeme, "endwhile") == 0) || (strcmp(t.lexeme, "goback") == 0) ||
+                        (strcmp(t.lexeme, "getint") == 0) || (strcmp(t.lexeme, "getreal") == 0) || (strcmp(t.lexeme, "getchar") == 0) ||
+                        (strcmp(t.lexeme, "putint") == 0) || (strcmp(t.lexeme, "putreal") == 0) || (strcmp(t.lexeme, "putchar") == 0)){
+                            t.cat = RES_WORD;
+                        }
                         return t;
                     }
                     break;

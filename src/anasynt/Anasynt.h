@@ -7,6 +7,7 @@
 
 
 extern TOKEN t;
+extern TOKEN tkLA;
 extern FILE *fd;
 extern int lineCount;
 

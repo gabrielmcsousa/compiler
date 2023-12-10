@@ -4,12 +4,15 @@
 #include <string.h>
 #include <ctype.h>
 #include "src/analex/Analex.h"
-// #include "src/anasynt/Anasynt.h"
+#include "src/anasynt/Anasynt.h"
+#include "src/Funcaux.h"
 
 FILE *fd;
 TOKEN t;
+TOKEN tkLA;
 int lineCount;
 bool printTree;
+char TABS[200];
 
 void runLex() {
     if((fd=fopen("expression.dat", "r")) == NULL) {
@@ -18,27 +21,14 @@ void runLex() {
 
     printf("LINE %d: ", lineCount);
     while(true) {
-        t = Analex(fd);
+        t = Analex(fd, false);
         switch (t.cat) {
             case ID: 
-                    if( (strcmp(t.lexeme, "const") == 0) || (strcmp(t.lexeme, "char") == 0) || (strcmp(t.lexeme, "int") == 0) || 
-                        (strcmp(t.lexeme, "float") == 0) || (strcmp(t.lexeme, "real") == 0) || (strcmp(t.lexeme, "bool") == 0) || 
-                        (strcmp(t.lexeme, "true") == 0) || (strcmp(t.lexeme, "false") == 0) || (strcmp(t.lexeme, "block") == 0) ||
-                        (strcmp(t.lexeme, "with") == 0) || (strcmp(t.lexeme, "main") == 0) || (strcmp(t.lexeme, "const") == 0) ||
-                        (strcmp(t.lexeme, "do") == 0) || (strcmp(t.lexeme, "while") == 0) || (strcmp(t.lexeme, "endblock") == 0) || 
-                        (strcmp(t.lexeme, "varying") == 0) || (strcmp(t.lexeme, "from") == 0) || (strcmp(t.lexeme, "to") == 0) ||
-                        (strcmp(t.lexeme, "downto") == 0) || (strcmp(t.lexeme, "for") == 0) || (strcmp(t.lexeme, "times") == 0) ||
-                        (strcmp(t.lexeme, "if") == 0) || (strcmp(t.lexeme, "elseif") == 0) || (strcmp(t.lexeme, "else") == 0) || 
-                        (strcmp(t.lexeme, "endif") == 0) || (strcmp(t.lexeme, "endwhile") == 0) || (strcmp(t.lexeme, "goback") == 0) ||
-                        (strcmp(t.lexeme, "getint") == 0) || (strcmp(t.lexeme, "getreal") == 0) || (strcmp(t.lexeme, "getchar") == 0) ||
-                        (strcmp(t.lexeme, "putint") == 0) || (strcmp(t.lexeme, "putreal") == 0) || (strcmp(t.lexeme, "putchar") == 0)){
-                            t.cat = RES_WORD;
-                            printf("<RES_WORD, %s> ", t.lexeme);
-                    }
-                    else {
-                        printf("<ID, %s> ", t.lexeme);
-                    }
-                     break;
+                    printf("<ID, %s> ", t.lexeme);
+                    break;
+            case RES_WORD:
+                printf("<RES_WORD, %s> ", t.lexeme);
+                break;
             case SYMBOL: switch (t.sy_code) {
                             case ASSIGN: printf("<SYMBOL, ASSIGN> ");
                                          break;
@@ -105,39 +95,39 @@ void runLex() {
     fclose(fd);
 }
 
-// void runSynt() {
-//     if((fd=fopen("expression.dat", "r")) == NULL) {
-//         printf("File not found!");
-//     }
+void runSynt() {
+    if((fd=fopen("expression.dat", "r")) == NULL) {
+        printf("File not found!");
+    }
 
-//     while(true) {
-//         t = Analex(fd);
-//         if (t.cat == EOFILE) {
-//             printf("\nEnd of File!\n");
-//             break;
-//         }
-//         Prog();
-//         if (t.cat == EOEXP) {
-//             printf("\nLINE %d: Syntactic Error!\n\n", lineCount - 1);
-//         }
-//         else {
-//             error("Syntax error!");
-//         }
-//     }
-//     fclose(fd);
-// }
+    while(true) {
+        t = Analex(fd, true);
+        if (t.cat == EOFILE) {
+            printf("\nEnd of File!\n");
+            break;
+        }
+        Prog();
+        if (t.cat == EOEXP) {
+            printf("\nLINE %d: Syntax Analysis Passed!!\n\n", lineCount - 1);
+        }
+        else {
+            error("Syntax error!");
+        }
+    }
+    fclose(fd);
+}
 
 int main() {
 
     system("chcp 65001");
 
-    lineCount = 1;
-    printf("\n\n[Lexical Analysis---------------]\n");
-    runLex();
-
     // lineCount = 1;
-    // printTree = false;
-    // printf("\n\n[Syntactic Analysis-------------]\n");
-    // runSynt();
+    // printf("\n\n[Lexical Analysis---------------]\n");
+    // runLex();
+
+    lineCount = 1;
+    printTree = false;
+    printf("\n\n[Syntactic Analysis-------------]\n");
+    runSynt();
 
 }

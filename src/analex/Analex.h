@@ -32,8 +32,10 @@ typedef struct{
 
 extern int lineCount;
 extern TOKEN t;
+extern TOKEN tkLA;
 extern FILE *fd;
 
-TOKEN Analex(FILE *);
+TOKEN AnalexTLA(FILE *, bool skip_EOEXP);
+TOKEN Analex(FILE *fd, bool skip_EOEXP);
 
 #endif

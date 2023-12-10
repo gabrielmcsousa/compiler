@@ -12,6 +12,6 @@ extern int lineCount;
 void error(char msg[]);
 void PrintNode(char info[], int move);
 void PrintNodeInt(int val, int move);
-
+void checkToken();
 
 #endif
