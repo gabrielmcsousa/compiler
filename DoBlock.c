@@ -128,9 +128,9 @@ int main() {
 
     system("chcp 65001");
 
-    // lineCount = 1;
-    // printf("\n\n[Lexical Analysis---------------]\n");
-    // runLex();
+    lineCount = 1;
+    printf("\n\n[Lexical Analysis---------------]\n");
+    runLex();
 
     lineCount = 1;
     printTree = false;

@@ -13,7 +13,7 @@ enum TOKEN_CAT idCat;
 
 // !!OK!!
 void Prog() {
-    printf("\n! CHECKING PROG !\n");
+    //printf("\n! CHECKING PROG !\n");
     while(t.cat == RES_WORD && ((strcmp(t.lexeme, "const") == 0) || (strcmp(t.lexeme, "char") == 0) || 
                                 (strcmp(t.lexeme, "int") == 0) || (strcmp(t.lexeme, "real") == 0) ||
                                 (strcmp(t.lexeme, "bool") == 0))) {
@@ -36,12 +36,12 @@ void Prog() {
         Block_def();
         if(t.processed) t = Analex(fd, true);
     }
-    printf("! PROG OK !\n");
+    //printf("! PROG OK !\n");
 }
 
 // !!OK!!
 void Decl_list_var() {
-    printf("\n! CHECKING DECL_LIST_VAR !\n");
+    //printf("\n! CHECKING DECL_LIST_VAR !\n");
     if(strcmp(t.lexeme, "const") == 0) {
         is_const = true;
         t.processed = true;
@@ -64,12 +64,12 @@ void Decl_list_var() {
     is_const = false;
     scope = 0;
     idCat = 0;
-    printf("! DECL_LIST_VAR OK !\n");
+    //printf("! DECL_LIST_VAR OK !\n");
 }
 
 // !!OK!!
 void Tipo() {
-    printf("\n! CHECKING TIPO !\n");
+    //printf("\n! CHECKING TIPO !\n");
     if(t.processed) t = Analex(fd, true);
     if(t.cat != RES_WORD || ((strcmp(t.lexeme, "char") != 0) && (strcmp(t.lexeme, "int") != 0) && 
                              (strcmp(t.lexeme, "real") != 0) && (strcmp(t.lexeme, "bool") != 0))){
@@ -95,12 +95,12 @@ void Tipo() {
         }
         t.processed = true;
     }
-    printf("! TIPO OK !\n");
+    //printf("! TIPO OK !\n");
 }
 
 // !!OK!!
 void Decl_var() {
-    printf("\n! CHECKING DECL_VAR !\n");
+    //printf("\n! CHECKING DECL_VAR !\n");
     //id
     if(t.processed) t = Analex(fd, true);
     if(t.cat != ID){
@@ -185,12 +185,12 @@ void Decl_var() {
             error("Missing right side of attribution!");
         }
     }
-    printf("! DECL_VAR OK !\n");
+    //printf("! DECL_VAR OK !\n");
 }
 
 // !!OK!!
 void Decl_block_prot() {
-    printf("\n! CHECKING DECL_BLOCK_PROT !\n");
+    //printf("\n! CHECKING DECL_BLOCK_PROT !\n");
     if(t.processed) t = Analex(fd, true);
     if(strcmp(t.lexeme, "block") != 0){
         error("Missing 'Block'!");
@@ -262,12 +262,12 @@ void Decl_block_prot() {
             if(t.processed) t = Analex(fd, true);
         }
     }
-    printf("! DECL_BLOCK_PROT OK !\n");
+    //printf("! DECL_BLOCK_PROT OK !\n");
 }
 
 // !!OK!!
 void Block_main(){
-    printf("\n! CHECKING BLOCK_MAIN !\n");
+    //printf("\n! CHECKING BLOCK_MAIN !\n");
     if(t.processed) t = Analex(fd, true);   
     if(t.cat != RES_WORD || (strcmp(t.lexeme, "block") != 0)){
         error("Missing 'block' !");
@@ -301,12 +301,12 @@ void Block_main(){
     }
     t.processed = true;
     scope = 0;
-    printf("! BLOCK_MAIN OK !\n");
+    //printf("! BLOCK_MAIN OK !\n");
 }
 
 // !!OK!!
 void Block_def(){
-    printf("\n! CHECKING BLOCK_DEF !\n");
+    //printf("\n! CHECKING BLOCK_DEF !\n");
     if(t.processed) t = Analex(fd, true);
     if(t.cat != RES_WORD || (strcmp(t.lexeme, "block") != 0)){
         error("Missing 'block' !");
@@ -415,12 +415,12 @@ void Block_def(){
     t.processed = true;
     t = Analex(fd, true);
     scope = 0;
-    printf("! BLOCK_DEF OK !\n");
+    //printf("! BLOCK_DEF OK !\n");
 }
 
 // !!OK!!
 void Cmd(){
-    printf("\n! CHECKING CMD !\n");
+    //printf("\n! CHECKING CMD !\n");
     if(t.processed) t = Analex(fd, true);
     if(t.cat == RES_WORD && (strcmp(t.lexeme, "do") == 0)){
         t.processed = true;
@@ -647,11 +647,11 @@ void Cmd(){
         }
         t.processed = true;
     }
-    printf("! CMD OK !\n");
+    //printf("! CMD OK !\n");
 }
 
 void Atrib(){
-    printf("\n! CHECKING ATRIB !\n");
+    //printf("\n! CHECKING ATRIB !\n");
     if(t.processed) t = Analex(fd, true);
     if(t.cat != ID){
         error("Missing ID");
@@ -679,11 +679,11 @@ void Atrib(){
     t = Analex(fd, true);
 
     Expr();
-    printf("! ATRIB OK !\n");
+    //printf("! ATRIB OK !\n");
 }
 
 void Expr(){
-    printf("\n! CHECKING EXPR !\n");
+    //printf("\n! CHECKING EXPR !\n");
     Expr_simp();
 
     if(t.processed) t = Analex(fd, true);
@@ -693,11 +693,11 @@ void Expr(){
         if(t.processed) t = Analex(fd, true);
         Expr_simp();
     }
-    printf("! EXPR OK !\n");
+    //printf("! EXPR OK !\n");
 }
 
 void Expr_simp(){
-    printf("\n! CHECKING EXPR_SIMP !\n");
+    //printf("\n! CHECKING EXPR_SIMP !\n");
     if(t.processed) t = Analex(fd, true);
     if(t.cat == SYMBOL && (t.sy_code == ADD || t.sy_code == SUBT)){
         t.processed = true;
@@ -717,11 +717,11 @@ void Expr_simp(){
         Termo();
         if(t.processed) t = Analex(fd, true);
     }
-    printf("! EXPR_SIMP OK !\n");
+    //printf("! EXPR_SIMP OK !\n");
 }
 
 void Termo(){
-    printf("\n! CHECKING TERMO !\n");
+    //printf("\n! CHECKING TERMO !\n");
     Fator();
 
     if(t.processed) t = Analex(fd, true);
@@ -735,11 +735,11 @@ void Termo(){
         Fator();
         if(t.processed) t = Analex(fd, true);
     }
-    printf("! TERMO OK !\n");
+    //printf("! TERMO OK !\n");
 }
 
 void Fator(){
-    printf("\n! CHECKING FATOR !\n");
+    //printf("\n! CHECKING FATOR !\n");
     if(t.cat == ID){
         t.processed = true;
         t = Analex(fd, true);
@@ -777,11 +777,11 @@ void Fator(){
         t = Analex(fd, true);
         Fator();
     }
-    printf("! FATOR OK !\n");
+    //printf("! FATOR OK !\n");
 }
 
 void Op_rel(){
-    printf("\n! CHECKING OP_REL !\n");
+    //printf("\n! CHECKING OP_REL !\n");
     if(t.processed) t = Analex(fd, true);
     if(t.cat != SYMBOL || (t.sy_code != EQUAL && t.sy_code != NOT_EQ && t.sy_code != LESS 
                        && t.sy_code != LESS_EQ && t.sy_code != GREATER && t.sy_code != GREATER_EQ)){
@@ -790,5 +790,5 @@ void Op_rel(){
     else{
         t.processed = true;
     }
-    printf("! OP_REL OK !\n");   
+    //printf("! OP_REL OK !\n");   
 }
