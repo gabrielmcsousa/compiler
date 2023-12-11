@@ -124,17 +124,23 @@ void runSynt() {
     fclose(fd);
 }
 
-int main() {
+int main(int argc, char **argv) {
 
-    system("chcp 65001");
-
+    // system("chcp 65001");
     lineCount = 1;
-    printf("\n\n[Lexical Analysis---------------]\n");
-    runLex();
-
-    lineCount = 1;
-    printTree = false;
-    printf("\n\n[Syntactic Analysis-------------]\n");
-    runSynt();
-
+    if(argc < 2) {
+        error("No Argument passed!");
+    }
+    else if(strcmp(argv[1], "lex") == 0){
+        printf("\n\n[Lexical Analysis---------------]\n");
+        runLex();
+    }
+    else if(strcmp(argv[1], "syn") == 0){
+        printTree = false;
+        printf("\n\n[Syntax Analysis-------------]\n");
+        runSynt();
+    }
+    else{
+        error("Invalid Argument! Use either 'lex' or 'syn'!");
+    }
 }

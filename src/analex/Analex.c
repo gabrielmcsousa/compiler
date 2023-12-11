@@ -54,7 +54,10 @@ TOKEN AnalexTLA(FILE *fd, bool skip_EOEXP) {
         char c = fgetc(fd);
         switch (state) {
             case 0: if (c == ' ' || c == '\t') state = 0;
-                    else if(c == '\n' && skip_EOEXP) state = 0;
+                    else if(c == '\n' && skip_EOEXP){
+                        state = 0;
+                        lineCount++;
+                    } 
                     else if(c == '\"') {
                         state = 34;
                     }
