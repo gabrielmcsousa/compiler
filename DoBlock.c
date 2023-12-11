@@ -6,10 +6,12 @@
 #include "src/analex/Analex.h"
 #include "src/anasynt/Anasynt.h"
 #include "src/Funcaux.h"
+#include "src/idTable.h"
 
 FILE *fd;
 TOKEN t;
 TOKEN tkLA;
+ID_TAB idTable;
 int lineCount;
 bool printTree;
 char TABS[200];
@@ -97,8 +99,13 @@ void runLex() {
 
 void runSynt() {
     if((fd=fopen("expression.dat", "r")) == NULL) {
-        printf("File not found!");
+        error("File not found!");
     }
+    // if((fd=fopen("expression.obj", "w")) == NULL) {
+    //     error("Could not create file!");
+    // }
+
+    InitIdTable();
 
     while(true) {
         t = Analex(fd, true);
@@ -107,7 +114,7 @@ void runSynt() {
             break;
         }
         Prog();
-        if (t.cat == EOEXP) {
+        if (t.cat == EOFILE) {
             printf("\nLINE %d: Syntax Analysis Passed!!\n\n", lineCount - 1);
         }
         else {

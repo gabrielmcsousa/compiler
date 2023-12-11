@@ -2,8 +2,14 @@
 #include <stdlib.h>
 #include <string.h>
 #include "../analex/Analex.h"
-#include "Anasynt.h"
 #include "../Funcaux.h"
+#include "../idTable.h"
+#include "Anasynt.h"
+
+bool is_const;
+int scope;
+enum TOKEN_CAT idCat;
+
 
 // !!OK!!
 void Prog() {
@@ -11,6 +17,7 @@ void Prog() {
     while(t.cat == RES_WORD && ((strcmp(t.lexeme, "const") == 0) || (strcmp(t.lexeme, "char") == 0) || 
                                 (strcmp(t.lexeme, "int") == 0) || (strcmp(t.lexeme, "real") == 0) ||
                                 (strcmp(t.lexeme, "bool") == 0))) {
+                                    scope = 0;
                                     Decl_list_var();
                                     if(t.processed) t = Analex(fd, true);
                                 }
@@ -20,13 +27,12 @@ void Prog() {
         Decl_block_prot();
         if(t.processed) t = Analex(fd, true);
     }
-    
+    scope = 1;
     Block_main();
     
     if(t.processed) t = Analex(fd, true);
     while(t.cat == RES_WORD && (strcmp(t.lexeme, "block") == 0)) {
-        t.processed = true;
-        t = Analex(fd, true);
+        scope = 2;
         Block_def();
         if(t.processed) t = Analex(fd, true);
     }
@@ -37,6 +43,7 @@ void Prog() {
 void Decl_list_var() {
     printf("\n! CHECKING DECL_LIST_VAR !\n");
     if(strcmp(t.lexeme, "const") == 0) {
+        is_const = true;
         t.processed = true;
         Tipo();
     }
@@ -54,6 +61,9 @@ void Decl_list_var() {
         Decl_var();
         if(t.processed) t = Analex(fd, true);
     }
+    is_const = false;
+    scope = 0;
+    idCat = 0;
     printf("! DECL_LIST_VAR OK !\n");
 }
 
@@ -66,6 +76,23 @@ void Tipo() {
                                 error("Missing type!");
                              }
     else{
+        if(strcmp(t.lexeme, "char") == 0){
+            idCat = CONST_CHAR;
+        }
+        else if(strcmp(t.lexeme, "int") == 0){
+            if(is_const){
+                idCat = ID_CONST;
+            }
+            else{
+                idCat = CONST_INT;
+            }
+        }
+        else if(strcmp(t.lexeme, "real") == 0){
+            idCat = CONST_REAL;
+        }
+        else if(strcmp(t.lexeme, "bool") == 0){
+            idCat = CONST_BOOL;
+        }
         t.processed = true;
     }
     printf("! TIPO OK !\n");
@@ -80,6 +107,13 @@ void Decl_var() {
         error("Missing ID!");
     }
     else{
+        if(SearchIdTable(t.lexeme) < 0){
+            InsertIdTable(t.lexeme, is_const, scope, idCat);
+            // printf("Inserted %s to ID table as const -> %d | scope -> %d | idCat -> %d \n", t.lexeme, is_const, scope, idCat);
+        }
+        else{
+            error("Duplicated ID!");
+        }
         t.processed = true;
         t = Analex(fd, true);
     }
@@ -89,7 +123,7 @@ void Decl_var() {
         t.processed = true;
         t = Analex(fd, true);
         
-        if(t.cat != CONST_INT || t.cat != ID_CONST){
+        if(t.cat != CONST_INT && t.cat != ID && idCat != ID_CONST){
             error("Missing length!");
         }
         else{
@@ -266,6 +300,7 @@ void Block_main(){
         error("Missing 'endblock' !");
     }
     t.processed = true;
+    scope = 0;
     printf("! BLOCK_MAIN OK !\n");
 }
 
@@ -301,7 +336,7 @@ void Block_def(){
             t.processed = true;
             t = Analex(fd, true);
             
-            if(t.cat != CONST_INT || t.cat != ID_CONST){
+            if(t.cat != CONST_INT && t.cat != ID && idCat != ID_CONST){
                 error("Missing length!");
             }
             else{
@@ -334,7 +369,7 @@ void Block_def(){
                 t.processed = true;
                 t = Analex(fd, true);
                 
-                if(t.cat != CONST_INT || t.cat != ID_CONST){
+                if(t.cat != CONST_INT && t.cat != ID && idCat != ID_CONST){
                     error("Missing length!");
                 }
                 else{
@@ -358,8 +393,6 @@ void Block_def(){
         while(t.cat == RES_WORD && ((strcmp(t.lexeme, "const") == 0) || (strcmp(t.lexeme, "char") == 0) || 
                                 (strcmp(t.lexeme, "int") == 0) || (strcmp(t.lexeme, "real") == 0) ||
                                 (strcmp(t.lexeme, "bool") == 0))) {
-                                    t.processed = true;
-                                    t = Analex(fd, true);
                                     Decl_list_var();
                                     if(t.processed) t = Analex(fd, true);
                                 }
@@ -369,8 +402,6 @@ void Block_def(){
                                     (strcmp(t.lexeme, "goback") == 0) || (strcmp(t.lexeme, "getint") == 0) || (strcmp(t.lexeme, "getreal") == 0) || 
                                     (strcmp(t.lexeme, "getchar") == 0) || (strcmp(t.lexeme, "putint") == 0) || (strcmp(t.lexeme, "putreal") == 0) || 
                                     (strcmp(t.lexeme, "putchar") == 0)))){
-            t.processed = true;
-            t = Analex(fd, true);
             Cmd();
             if(t.processed) t = Analex(fd, true);
         }
@@ -383,6 +414,7 @@ void Block_def(){
     }
     t.processed = true;
     t = Analex(fd, true);
+    scope = 0;
     printf("! BLOCK_DEF OK !\n");
 }
 
@@ -424,8 +456,6 @@ void Cmd(){
                                     (strcmp(t.lexeme, "goback") == 0) || (strcmp(t.lexeme, "getint") == 0) || (strcmp(t.lexeme, "getreal") == 0) || 
                                     (strcmp(t.lexeme, "getchar") == 0) || (strcmp(t.lexeme, "putint") == 0) || (strcmp(t.lexeme, "putreal") == 0) || 
                                     (strcmp(t.lexeme, "putchar") == 0)))){
-            t.processed = true;
-            t = Analex(fd, true);
             Cmd();
         }
         else{
@@ -457,7 +487,6 @@ void Cmd(){
             }
             t.processed = true;
             t = Analex(fd, true);
-
             Expr();
         }
         else if(t.cat == RES_WORD && (strcmp(t.lexeme, "while") == 0)){
@@ -514,14 +543,12 @@ void Cmd(){
                                     (strcmp(t.lexeme, "goback") == 0) || (strcmp(t.lexeme, "getint") == 0) || (strcmp(t.lexeme, "getreal") == 0) || 
                                     (strcmp(t.lexeme, "getchar") == 0) || (strcmp(t.lexeme, "putint") == 0) || (strcmp(t.lexeme, "putreal") == 0) || 
                                     (strcmp(t.lexeme, "putchar") == 0)))){
-            t.processed = true;
-            t = Analex(fd, true);
             Cmd();
             if(t.processed) t = Analex(fd, true);
         }
         
         if(t.processed) t = Analex(fd, true);
-        while(t.cat == RES_WORD || (strcmp(t.lexeme, "elseif") == 0)){
+        while(t.cat == RES_WORD && (strcmp(t.lexeme, "elseif") == 0)){
             t.processed = true;
             t = Analex(fd, true);
 
@@ -544,8 +571,6 @@ void Cmd(){
                                     (strcmp(t.lexeme, "goback") == 0) || (strcmp(t.lexeme, "getint") == 0) || (strcmp(t.lexeme, "getreal") == 0) || 
                                     (strcmp(t.lexeme, "getchar") == 0) || (strcmp(t.lexeme, "putint") == 0) || (strcmp(t.lexeme, "putreal") == 0) || 
                                     (strcmp(t.lexeme, "putchar") == 0)))){
-                t.processed = true;
-                t = Analex(fd, true);
                 Cmd();
                 if(t.processed) t = Analex(fd, true);
             }
@@ -560,8 +585,6 @@ void Cmd(){
                                     (strcmp(t.lexeme, "goback") == 0) || (strcmp(t.lexeme, "getint") == 0) || (strcmp(t.lexeme, "getreal") == 0) || 
                                     (strcmp(t.lexeme, "getchar") == 0) || (strcmp(t.lexeme, "putint") == 0) || (strcmp(t.lexeme, "putreal") == 0) || 
                                     (strcmp(t.lexeme, "putchar") == 0)))){
-                t.processed = true;
-                t = Analex(fd, true);
                 Cmd();
                 if(t.processed) t = Analex(fd, true);
             }
@@ -571,6 +594,7 @@ void Cmd(){
         if(t.cat != RES_WORD || (strcmp(t.lexeme, "endif") != 0)){
             error("Missing 'endif' !");
         }
+        t.processed = true;
     }
     // END IF 'if'
     else if(t.cat == RES_WORD && (strcmp(t.lexeme, "while") == 0)){
@@ -596,8 +620,6 @@ void Cmd(){
                                     (strcmp(t.lexeme, "goback") == 0) || (strcmp(t.lexeme, "getint") == 0) || (strcmp(t.lexeme, "getreal") == 0) || 
                                     (strcmp(t.lexeme, "getchar") == 0) || (strcmp(t.lexeme, "putint") == 0) || (strcmp(t.lexeme, "putreal") == 0) || 
                                     (strcmp(t.lexeme, "putchar") == 0)))){
-            t.processed = true;
-            t = Analex(fd, true);
             Cmd();
             if(t.processed) t = Analex(fd, true);
         }
@@ -650,7 +672,6 @@ void Atrib(){
         t.processed = true;
         t = Analex(fd, true);
     }
-
     if(t.cat != SYMBOL || t.sy_code != ASSIGN){
         error("Missing '=' !");
     }
@@ -666,7 +687,8 @@ void Expr(){
     Expr_simp();
 
     if(t.processed) t = Analex(fd, true);
-    if(t.cat == SYMBOL){
+    if(t.cat == SYMBOL && (t.sy_code == EQUAL || t.sy_code == NOT_EQ || t.sy_code == LESS 
+                       || t.sy_code == LESS_EQ || t.sy_code == GREATER || t.sy_code == GREATER_EQ)){
         Op_rel();
         if(t.processed) t = Analex(fd, true);
         Expr_simp();
@@ -685,7 +707,7 @@ void Expr_simp(){
     Termo();
 
     if(t.processed) t = Analex(fd, true);
-    while(t.cat == SYMBOL){
+    while(t.cat == SYMBOL && (t.sy_code == ADD || t.sy_code == SUBT || t.sy_code == OR)){
         if(t.sy_code != ADD && t.sy_code != SUBT && t.sy_code != OR){
             error("Invalid Symbol!");
         }
@@ -703,7 +725,7 @@ void Termo(){
     Fator();
 
     if(t.processed) t = Analex(fd, true);
-    while(t.cat == SYMBOL){
+    while(t.cat == SYMBOL && (t.sy_code == MULT || t.sy_code == DIV || t.sy_code == AND)){
         if(t.sy_code != MULT || t.sy_code != DIV || t.sy_code != AND){
             error("Invalid Symbol!");
         }
@@ -761,8 +783,8 @@ void Fator(){
 void Op_rel(){
     printf("\n! CHECKING OP_REL !\n");
     if(t.processed) t = Analex(fd, true);
-    if(t.cat != SYMBOL || t.sy_code != EQUAL || t.sy_code != NOT_EQ || t.sy_code != LESS 
-                       || t.sy_code != LESS_EQ || t.sy_code != GREATER || t.sy_code != GREATER_EQ){
+    if(t.cat != SYMBOL || (t.sy_code != EQUAL && t.sy_code != NOT_EQ && t.sy_code != LESS 
+                       && t.sy_code != LESS_EQ && t.sy_code != GREATER && t.sy_code != GREATER_EQ)){
             error("Invalid Operator!");
     }
     else{
