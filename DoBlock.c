@@ -129,7 +129,7 @@ int main(int argc, char **argv) {
     // system("chcp 65001");
     lineCount = 1;
     if(argc < 2) {
-        error("No Argument passed!");
+        error("No Argument passed!\n\t Use either 'lex' or 'syn'!");
     }
     else if(strcmp(argv[1], "lex") == 0){
         printf("\n\n[Lexical Analysis---------------]\n");
@@ -141,6 +141,6 @@ int main(int argc, char **argv) {
         runSynt();
     }
     else{
-        error("Invalid Argument! Use either 'lex' or 'syn'!");
+        error("Invalid Argument!\n\t Use either 'lex' or 'syn'!");
     }
 }
